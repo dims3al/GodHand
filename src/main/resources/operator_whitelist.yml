@@ -1,0 +1,21 @@
+# ================================================================
+# GodHand operator whitelist
+#
+# This file stores operators who are allowed to use GodHand when
+# enforce_operator_whitelist: true is set in config.yml.
+#
+# A listed player MUST still be a server operator. This file grants
+# GodHand access only; it does not grant operator status.
+#
+# You may edit entries manually or use:
+#   /gh whitelist add <player>
+#   /gh whitelist remove <player|uuid>
+# Run /gh reload after manual edits.
+# ================================================================
+
+players: []
+
+# Example:
+# players:
+#   - name: ExampleAdmin
+#     uuid: 00000000-0000-0000-0000-000000000000

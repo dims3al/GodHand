@@ -1,0 +1,13 @@
+name: GodHand
+version: 1.0.0
+main: xyz.dimseal.godHand.GodHand
+api-version: '26.2'
+load: POSTWORLD
+author: Dimseal
+description: 'A server-admin plugin for enforcing rules on malicious or unfortunate players with a giant hand.'
+
+commands:
+  godhand:
+    description: 'Controls the GodHand admin utility.'
+    usage: '/godhand help'
+    aliases: [gh]

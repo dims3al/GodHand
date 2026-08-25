@@ -1,0 +1,94 @@
+# ================================================================
+# GodHand 1.0.0 configuration
+# Author: Dimseal
+#
+# This file controls GodHand authorization enforcement, default Hand visuals,
+# and the chat/death messages produced by Hand actions.
+# Whitelist entries themselves live in operator_whitelist.yml.
+# Run /gh reload after editing this file.
+# ================================================================
+
+enforce_operator_whitelist: false
+# false: every operator can use GodHand.
+# true:  a player must BOTH be an operator and appear in operator_whitelist.yml.
+# Unauthorized players will not receive /gh command suggestions.
+# The server console can always recover with: gh whitelist off
+
+hand:
+  settings:
+    # Presets: low, medium, high, custom
+    # low    = legacy model + low density + minimal extra particles
+    # medium = anatomical model + normal density
+    # high   = anatomical model + ultra density + full visual extras
+    #
+    # When preset is low/medium/high, the individual fields below are ignored.
+    # Commands such as /gh settings scale or /gh settings color automatically
+    # switch the preset to custom and save the resulting values here.
+    preset: high
+
+    # The fields below are used when preset: custom.
+    scale: 3.0
+    density: ultra         # low, normal, high, ultra
+    model: anatomical      # anatomical, legacy
+    renderer: itemdisplays # itemdisplays, particles
+    shading: true
+
+    # For the particles renderer, this controls whether the particles are forced
+    # to be visible beyond the typical particle render distance.
+    force_particles: true
+
+    color:
+      # Named colors: white, spectral, crimson, violet, void, gold,
+      # emerald, cyan, sand, or custom.
+      # For custom colors, solid ItemDisplay Hands choose the nearest vanilla
+      # concrete color while particles preserve the exact RGB color.
+      preset: white
+      custom_rgb: [245, 245, 255]
+
+messages:
+  # Master switch for GodHand-generated target/death chat messages.
+  # Sounds, particles, damage, and animations are unaffected.
+  enabled: true
+
+  # Supports normal Minecraft '&' color codes.
+  prefix: '&8[&f&lHAND OF GOD&8] &r'
+
+  target:
+    enabled: true
+    text:
+      slam_hit: '&4&lTHE HAND OF GOD HAS STRUCK YOU.'
+      judgment_hit: '&4&lTHE HAND OF GOD HAS PASSED JUDGMENT UPON YOU.'
+      force_slap_hit: '&4&lTHE HAND OF GOD HAS STRUCK YOU.'
+      slap_hit: '&4THE HAND CASTS YOU ASIDE.'
+      cyclone_hit: '&4&lTHE CYCLONE OF THE HAND TEARS THROUGH YOU.'
+      bless_complete: '&a&lTHE HAND OF GOD BLESSES YOU. GO WITH STRENGTH AND GRACE FOR FIVE MINUTES.'
+      sanctuary_arrive: '&e&lTHE HAND OF GOD SHELTERS YOU BENEATH ITS PALM.'
+      sanctuary_complete: '&eTHE HAND OF GOD LEAVES YOU RESTORED AND GUARDED.'
+      spank_final: '&4&lTHE FINAL SPANK CASTS YOU FROM GOD''S GRASP.'
+      rage_throw: '&4&lTHE HAND OF GOD HURLS YOU FROM ITS GRASP.'
+      clap_hit: '&f&lTHE HANDS OF GOD CLOSE LIKE THUNDER AROUND YOU.'
+      pound_complete: '&4THE HANDS OF GOD CEASE THEIR POUNDING.'
+      givebird_attack: '&4&lF U'
+      guard_start: '&aTHE HAND OF GOD STANDS GUARD BESIDE YOU.'
+      punch_hit: '&4&lTHE HAND OF GOD HAS STRUCK YOU.'
+      stalk_start: '&4THE HAND OF GOD IS WATCHING YOU.'
+
+  death:
+    enabled: true
+    # {player} is replaced with the dead player's name.
+    text:
+      slam: '{player} was crushed beneath the Hand of God.'
+      judgment: '{player} was consumed by the judgment of the Hand of God.'
+      force_slap: '{player} was struck down by the Hand of God.'
+      punch: '{player} was broken by the fist of the Hand of God.'
+      slap: '{player} was cast aside by the Hand of God.'
+      cyclone: '{player} was torn apart by the cyclone of the Hand of God.'
+      breach: '{player} was hunted down in the dark by the Hand of God.'
+      spank: '{player} could not endure the Hand of God''s spank sequence.'
+      rage: '{player} was torn apart by the rage of the Hand of God.'
+      clap: '{player} was crushed between the Hands of God.'
+      smash: '{player} was obliterated by the Hand of God.'
+      throw: '{player} was hurled to their death by the Hand of God.'
+      toss: '{player} fell after being tossed by the Hand of God.'
+      juggle: '{player} fell from the impossible juggle of the Hands of God.'
+      guard: '{player} was slain by the guardian Hand of God.'
