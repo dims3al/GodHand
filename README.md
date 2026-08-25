@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✋ GodHand ✋
+# GodHand
 
 ### A giant animated hand for Minecraft servers.
 
@@ -14,39 +14,64 @@
 
 ---
 
-## ✨ What is GodHand?
+## What is GodHand?
 
 **GodHand** is a Minecraft Paper plugin that gives server operators control over a giant animated hand.
 
 The hand can grab players, throw them around, attack them, protect them, perform animations, and much more.
 
-It uses Minecraft display entities, particles, sounds, custom animations, and combat effects to create a giant Hand of God.
+**It uses item displays or particles as a renderer. The item display renderer is set as default due to its edge in performance as the particle renderer may raise the ping of server members.**
 
 ---
 
-## ⚡ Features
+## Features
 
-* ✋ Fully animated giant hand
-* 💥 Custom attacks
-* 🤏 Grab and carry players
-* 🛡️ Guard players
-* ✨ Bless and protect players
-* 👊 Punch, slap, smash, and slam attacks
-* 🌪️ Cyclone attack
-* 🎯 Chase and stalk players
-* 🤹 Juggle and toss players
-* 👍 Thumbs up
-* 👎 Thumbs down
-* 👋 Wave
-* 🖕 Middle finger
-* 🎨 Multiple hand colors and visual styles
-* ⚙️ Configurable quality settings
-* 💀 Custom death messages
-* 🔒 Optional operator whitelist
+- Fully animated giant hand
+- Custom attacks
+- Grab, carry, or transport players
+- Guard, bless, and protect players
+- Punch, slap, smash, and slam attacks
+- Cyclone attack
+- Chase and stalk players
+- Juggle and toss players
+- Poses: thumbs up, thumbs down, middle finger...
+- Multiple hand colors and visual styles
+- Configurable quality settings
+- Custom death messages
+- Optional operator whitelist
 
 ---
 
-## 🎮 Some Actions
+## 📦 Installation
+
+### Requirements
+
+![Paper](https://img.shields.io/badge/Paper-26.2-00aaee)
+![Purpur](https://img.shields.io/badge/Purpur-26.2-a855f7)
+![Java](https://img.shields.io/badge/Java-25.0.2-orange)
+
+GodHand currently supports:
+
+* ✅ Paper 26.2
+* ✅ Purpur 26.2
+* ❌ Spigot
+* ❌ CraftBukkit
+
+Install:
+
+1. Download the latest GodHand `.jar`.
+2. Place it inside your server's `plugins` folder.
+3. Restart the server.
+4. Make sure you are a server operator.
+5. Run:
+
+```text
+/gh help
+```
+
+---
+
+## Some Actions
 
 ### Attacks
 
@@ -70,12 +95,12 @@ It uses Minecraft display entities, particles, sounds, custom animations, and co
 /gh action juggle <player>
 /gh action chase <player>
 /gh action stalk <player>
-/gh action wave
+/gh action wave 
 /gh action thumbsup
 /gh action thumbsdown
 ```
 
-### Friendly
+### Friendly Actions
 
 ```text
 /gh friendly bless <player>
@@ -91,36 +116,7 @@ For the full command list:
 
 ---
 
-## 📦 Installation
-
-### Requirements
-
-![Paper](https://img.shields.io/badge/Paper-26.2-00aaee)
-![Purpur](https://img.shields.io/badge/Purpur-26.2-a855f7)
-![Java](https://img.shields.io/badge/Java-25.0.2-orange)
-
-GodHand currently supports:
-
-* ✅ Paper 26.2
-* ✅ Purpur 26.2
-* ❌ Spigot
-* ❌ CraftBukkit
-
-### Install
-
-1. Download the latest GodHand `.jar`.
-2. Place it inside your server's `plugins` folder.
-3. Restart the server.
-4. Make sure you are a server operator.
-5. Run:
-
-```text
-/gh help
-```
-
----
-
-## 🎨 Customization
+## Customization
 
 GodHand includes several hand styles:
 
@@ -134,18 +130,21 @@ GodHand includes several hand styles:
 * 🔵 Cyan
 * 🟤 Sand
 
-Visual quality can also be changed between:
+Visual quality/performance can also be changed between these presets:
 
 ```text
-Low
-Medium
 High
-Custom
+Medium
+Low
+```
+
+```text
+/gh settings preset <profile>
 ```
 
 ---
 
-## 🤖 AI-Assisted Development
+## 🤖 AI-Assisted Development 🤖
 
 GodHand was developed with the assistance of AI assisted tools.
 
@@ -157,7 +156,7 @@ For now, GodHand is simply a free open-source project made for fun and experimen
 
 ---
 
-## 🛠️ Built With
+## Built With
 
 ![Java](https://img.shields.io/badge/Java-25.0.2-orange?style=flat-square)
 ![Paper API](https://img.shields.io/badge/API-Paper-00aaee?style=flat-square)
@@ -170,7 +169,7 @@ For now, GodHand is simply a free open-source project made for fun and experimen
 
 ---
 
-## 📜 License
+## GNU License
 
 GodHand is licensed under the **GNU General Public License v3.0**.
 
@@ -180,7 +179,7 @@ See [`LICENSE`](LICENSE) for more information.
 
 <div align="center">
 
-## ✋ GODHAND
+## ✋ GODHAND ✋
 
 **Sometimes a ban hammer isn't enough.**
 
