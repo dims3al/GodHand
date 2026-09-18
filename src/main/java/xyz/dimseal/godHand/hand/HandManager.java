@@ -194,12 +194,9 @@ public final class HandManager {
             hand.dispose();
         }
         hand = new ParticleHand(location, palmWidth);
-        particleRenderer.resetExposure();
-        itemDisplayRenderer.clear();
-        clearSecondaryVisuals();
+        clearVisuals();
         lastRenderMode = hand.getRenderMode();
         hand.startIdle();
-        particleRenderTick = 0;
         auraTick = 0;
         displayMaintenanceTick = 0;
         polishRenderer.reset();
@@ -221,17 +218,15 @@ public final class HandManager {
             return false;
         }
 
-        hand.dispose();
-        hand = null;
+        clear();
+        return true;
+    }
+
+    private void clearVisuals() {
         particleRenderer.resetExposure();
         itemDisplayRenderer.clear();
-        clearSecondaryVisuals();
-        cleanupTaggedDisplayOrphans(Set.of());
         particleRenderTick = 0;
-        auraTick = 0;
-        displayMaintenanceTick = 0;
-        polishRenderer.reset();
-        return true;
+        clearSecondaryVisuals();
     }
 
     private void clearSecondaryVisuals() {
@@ -249,10 +244,7 @@ public final class HandManager {
      */
     public void refreshVisuals() {
         ParticleHand current = hand;
-        particleRenderer.resetExposure();
-        itemDisplayRenderer.clear();
-        clearSecondaryVisuals();
-        particleRenderTick = 0;
+        clearVisuals();
         auraTick = 0;
         if (current != null && current.getRenderMode() == HandRenderMode.ITEM_DISPLAYS) {
             itemDisplayRenderer.render(current, current.hasActiveGrip(), current.getVisualRenderLocationFor(current));
@@ -271,20 +263,13 @@ public final class HandManager {
         return secondaryItemDisplayRenderer.getActiveDisplayCount();
     }
 
-    public boolean hasHand() {
-        return hand != null;
-    }
-
     public void clear() {
         if (hand != null) {
             hand.dispose();
         }
         hand = null;
-        particleRenderer.resetExposure();
-        itemDisplayRenderer.clear();
-        clearSecondaryVisuals();
+        clearVisuals();
         cleanupTaggedDisplayOrphans(Set.of());
-        particleRenderTick = 0;
         auraTick = 0;
         displayMaintenanceTick = 0;
         polishRenderer.reset();
@@ -310,12 +295,7 @@ public final class HandManager {
      */
     public int emergencyPurgeItemDisplays(boolean rebuildCurrentHand) {
         int removed = ItemDisplayHandRenderer.purgeTaggedDisplaysServerWide();
-        itemDisplayRenderer.clear();
-        secondaryItemDisplayRenderer.clear();
-        particleRenderer.resetExposure();
-        secondaryParticleRenderer.resetExposure();
-        particleRenderTick = 0;
-        secondaryParticleRenderTick = 0;
+        clearVisuals();
         displayMaintenanceTick = 0;
 
         ParticleHand current = hand;

@@ -11,7 +11,7 @@ public enum EasingCurve {
     EASE_IN_OUT;
 
     public double apply(double t) {
-        t = Math.max(0.0, Math.min(1.0, t));
+        t = Math.clamp(t, 0.0, 1.0);
         return switch (this) {
             case LINEAR -> t;
             case SMOOTH -> t * t * (3.0 - 2.0 * t);

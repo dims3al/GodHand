@@ -409,20 +409,13 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean mainActionPose(Player operator, String label, String[] args) {
-        if (args.length < 2 || args.length > 4) {
-            throw new IllegalArgumentException("Usage: /" + label + " pose <open|relaxed|fist|point|bird|thumbs_up|thumbs_down|claw> [seconds] [easing]");
+        if (args.length != 2) {
+            throw new IllegalArgumentException("Usage: /" + label + " pose <open|relaxed|fist|point|bird|thumbs_up|thumbs_down|claw>");
         }
         ParticleHand hand = requireHand();
         HandPose pose = HandPose.parse(args[1]);
-        if (args.length >= 3) {
-            int ticks = parseDurationTicks(args[2]);
-            EasingCurve easing = args.length >= 4 ? EasingCurve.parse(args[3]) : EasingCurve.SMOOTH;
-            hand.animatePose(pose, ticks, easing);
-            operator.sendMessage(PREFIX + "§fPose §7→ §f" + pose.commandName() + " §7over §f" + format(ticks / 20.0) + "s§7 (" + easing.commandName() + ").");
-        } else {
-            hand.applyPose(pose);
-            operator.sendMessage(PREFIX + "§fPose §7→ §f" + pose.commandName() + "§7.");
-        }
+        hand.applyPose(pose);
+        operator.sendMessage(PREFIX + "§fPose §7→ §f" + pose.commandName() + "§7.");
         return true;
     }
 
@@ -441,14 +434,16 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean mainThrow(Player operator, String label, String[] args) {
-        if (args.length > 4) {
-            throw new IllegalArgumentException("Usage: /" + label + " throw [forward-speed] [upward-speed] [open-seconds]");
+        if (args.length > 2) {
+            throw new IllegalArgumentException("Usage: /" + label + " throw [strength 0-5]");
+        }
+        double strength = args.length == 2 ? parseDouble(args[1], "throw strength") : 1.35;
+        if (strength < 0.0 || strength > 5.0) {
+            throw new IllegalArgumentException("Throw strength must be between 0 and 5.");
         }
         ParticleHand hand = requireHand();
-        double forward = args.length >= 2 ? parseDouble(args[1], "throw forward speed") : 1.35;
-        double upward = args.length >= 3 ? parseDouble(args[2], "throw upward speed") : 0.45;
-        int openTicks = args.length >= 4 ? parseDurationTicks(args[3]) : 8;
-        if (hand.throwHeldPlayer(forward, upward, openTicks)) {
+        // Keep the original default arc and opening time; strength scales both speeds.
+        if (hand.throwHeldPlayer(strength, strength / 3.0, 8)) {
             operator.sendMessage(PREFIX + "§fThrown.");
         } else {
             operator.sendMessage(PREFIX + "§cThe Hand must be holding a player first.");
@@ -582,10 +577,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     // ---------------------------------------------------------------------
 
     private boolean presetGroundSlam(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " groundslam [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "groundslam");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings);
 
         double height = 10.5;
@@ -604,10 +596,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetGrab(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " grab [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "grab");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings);
 
         double height = 7.5;
@@ -621,8 +610,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetJudgment(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " judgment [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "judgment");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         double orbitRadius = 16.0;
         int approachTicks = TrueGodAttackPresets.surfaceJudgmentApproachTicks(hand, target, orbitRadius);
@@ -632,8 +620,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetForceSlap(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " forceslap [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "forceslap");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         double stageDistance = 11.0;
         int approachTicks = TrueGodAttackPresets.forceSlapApproachTicks(hand, target, stageDistance);
@@ -647,10 +634,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetPunch(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " punch [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "punch");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings);
 
         double stageDistance = 9.0;
@@ -665,10 +649,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetSlap(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " slap [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "slap");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
 
         double stageDistance = 7.0;
@@ -682,8 +663,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetRage(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " rage [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "rage");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.rage(target);
         operator.sendMessage(PREFIX + "§4Rage sequence §7→ §f" + target.getName()
@@ -692,8 +672,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetClap(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " clap [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "clap");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.clap(target);
         operator.sendMessage(PREFIX + "§fThunder clap §7→ §f" + target.getName() + "§7.");
@@ -701,8 +680,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetPound(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " pound [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "pound");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.pound(target);
         operator.sendMessage(PREFIX + "§4Pound §7→ §f" + target.getName() + " §8(alternating 3-damage fist slams to ≤3 hearts)");
@@ -710,8 +688,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetWave(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " wave [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "wave");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.wave(target);
         operator.sendMessage(PREFIX + "§fWave §7→ §f" + target.getName() + "§7.");
@@ -719,8 +696,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetThumb(Player operator, String label, String[] args, boolean up) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + (up ? " thumbsup" : " thumbsdown") + " [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, up ? "thumbsup" : "thumbsdown");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         if (up) hand.thumbsUp(target); else hand.thumbsDown(target);
         operator.sendMessage(PREFIX + (up ? "§aThumbs up" : "§cThumbs down") + " §7→ §f" + target.getName() + "§7.");
@@ -728,8 +704,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetBird(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " bird [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "bird");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.bird(target);
         operator.sendMessage(PREFIX + "§fBird gesture §7→ §f" + target.getName() + "§7.");
@@ -737,8 +712,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetGiveBird(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " givebird [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "givebird");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.giveBird(target);
         operator.sendMessage(PREFIX + "§4GiveBird §7→ §f" + target.getName() + "§7.");
@@ -746,8 +720,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetJuggle(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " juggle [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "juggle");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         double height = 8.5;
         int approachTicks = TrueGodAttackPresets.grabApproachTicks(hand, target, height);
@@ -778,10 +751,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetCyclone(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " cyclone [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "cyclone");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings);
 
         double stageDistance = 10.0;
@@ -793,10 +763,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetBreach(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " breach [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "breach");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.breach(target, 20 * 7);
         operator.sendMessage(PREFIX + "§4Breach manifested inside §f" + target.getName() + "§4's space.");
@@ -804,8 +771,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetToss(Player operator, String label, String[] args) {
-        if (args.length > 2) throw new IllegalArgumentException("Usage: /" + label + " toss [player]");
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "toss");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         double grabHeight = 7.5;
         int approachTicks = TrueGodAttackPresets.grabApproachTicks(hand, target, grabHeight);
@@ -816,10 +782,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetBless(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " bless [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "bless");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         double height = 7.0;
         int approachTicks = TrueGodAttackPresets.grabApproachTicks(hand, target, height);
@@ -831,10 +794,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetSanctuary(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " sanctuary [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "sanctuary");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         hand.sanctuary(target, 20 * 6);
         operator.sendMessage(PREFIX + "§eSanctuary §7→ §f" + target.getName() + "§7.");
@@ -842,10 +802,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean presetSpank(Player operator, String label, String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Usage: /" + label + " spank [player]");
-        }
-        Player target = resolvePresetTarget(operator, args.length >= 2 ? args[1] : null);
+        Player target = resolvePresetTarget(operator, label, args, "spank");
         ParticleHand hand = TrueGodAttackPresets.prepare(handManager, target, mainSettings, false);
         double height = 7.5;
         int approachTicks = TrueGodAttackPresets.grabApproachTicks(hand, target, height);
@@ -898,13 +855,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
         if (!operator.getWorld().equals(carried.getWorld())) {
             throw new IllegalArgumentException("Relative/coordinate transport requires you to be in the carried player's world.");
         }
-        Location base = operator.getLocation();
-        Location destination = new Location(
-                carried.getWorld(),
-                parseCoordinate(args[2], base.getX(), "x"),
-                parseCoordinate(args[3], base.getY(), "y"),
-                parseCoordinate(args[4], base.getZ(), "z")
-        );
+        Location destination = parseCoordinates(operator.getLocation(), args, 2);
         hand.transport(carried, destination, height, approachTicks, closeTicks);
         operator.sendMessage(PREFIX + "§fTransport §7→ §f" + carried.getName() + " §7to §f"
                 + format(destination.getX()) + " " + format(destination.getY()) + " " + format(destination.getZ()) + "§7.");
@@ -933,16 +884,10 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            Location base = operator.getLocation();
             if (!operator.getWorld().equals(hand.getWorld())) {
                 throw new IllegalArgumentException("Relative MOVE_TO coordinates require you to be in the Hand's world.");
             }
-            Location destination = new Location(
-                    hand.getWorld(),
-                    parseCoordinate(args[1], base.getX(), "x"),
-                    parseCoordinate(args[2], base.getY(), "y"),
-                    parseCoordinate(args[3], base.getZ(), "z")
-            );
+            Location destination = parseCoordinates(operator.getLocation(), args, 1);
             hand.moveHeldTo(destination);
             operator.sendMessage(PREFIX + "§fHeld target moving to §f"
                     + format(destination.getX()) + " " + format(destination.getY()) + " " + format(destination.getZ())
@@ -961,13 +906,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
             if (!operator.getWorld().equals(hand.getWorld())) {
                 throw new IllegalArgumentException("Relative MOVE_TO coordinates require you to be in the Hand's world.");
             }
-            Location base = operator.getLocation();
-            destination = new Location(
-                    hand.getWorld(),
-                    parseCoordinate(args[1], base.getX(), "x"),
-                    parseCoordinate(args[2], base.getY(), "y"),
-                    parseCoordinate(args[3], base.getZ(), "z")
-            );
+            destination = parseCoordinates(operator.getLocation(), args, 1);
             hand.lookAt(destination, 12.0);
         }
 
@@ -995,13 +934,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        Location base = operator.getLocation();
-        Location point = new Location(
-                operator.getWorld(),
-                parseCoordinate(args[1], base.getX(), "x"),
-                parseCoordinate(args[2], base.getY(), "y"),
-                parseCoordinate(args[3], base.getZ(), "z")
-        );
+        Location point = parseCoordinates(operator.getLocation(), args, 1);
         ParticleHand hand = TrueGodAttackPresets.prepareAt(handManager, point, mainSettings);
         int approachTicks = TrueGodAttackPresets.smashApproachTicks(hand, point, height);
         hand.smash(point, height, approachTicks, explosionPower);
@@ -1050,11 +983,7 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
             if (!operator.getWorld().equals(hand.getWorld())) {
                 throw new IllegalArgumentException("Coordinate lookat requires you to be in the Hand's world.");
             }
-            Location base = operator.getLocation();
-            Location point = new Location(hand.getWorld(),
-                    parseCoordinate(args[1], base.getX(), "x"),
-                    parseCoordinate(args[2], base.getY(), "y"),
-                    parseCoordinate(args[3], base.getZ(), "z"));
+            Location point = parseCoordinates(operator.getLocation(), args, 1);
             hand.lookAt(point, 12.0);
             hand.startIdle();
             operator.sendMessage(PREFIX + "§fHand is now watching that point.");
@@ -1702,6 +1631,13 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
     }
 
 
+    private Player resolvePresetTarget(Player operator, String label, String[] args, String action) {
+        if (args.length > 2) {
+            throw new IllegalArgumentException("Usage: /" + label + " " + action + " [player]");
+        }
+        return resolvePresetTarget(operator, args.length == 2 ? args[1] : null);
+    }
+
     /**
      * Routed actions accept an optional explicit player. With no argument,
      * target the nearest other player in the operator's world; if testing alone,
@@ -1804,6 +1740,13 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
             return isDouble(input.substring(1));
         }
         return isDouble(input);
+    }
+
+    private static Location parseCoordinates(Location base, String[] args, int start) {
+        return new Location(base.getWorld(),
+                parseCoordinate(args[start], base.getX(), "x"),
+                parseCoordinate(args[start + 1], base.getY(), "y"),
+                parseCoordinate(args[start + 2], base.getZ(), "z"));
     }
 
     /** Vanilla-style absolute or relative coordinate parser: ~, ~5, ~-2.5, or an absolute number. */
@@ -1919,7 +1862,8 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage("§f throw §8• §fthumbsdown §8• §fthumbsup §8• §ftransport §8• §fwave");
                 sender.sendMessage("");
                 helpLine(sender, label, "action lookat <player|x y z|stop>", "Aim the Hand or stop look tracking.", "§b");
-                helpLine(sender, label, "action pose <pose> [seconds] [easing]", "Apply or animate a Hand pose.", "§b");
+                helpLine(sender, label, "action pose <pose>", "Apply a Hand pose.", "§b");
+                helpLine(sender, label, "action throw [strength 0-5]", "Throw the held player; default strength is 1.35.", "§b");
                 helpLine(sender, label, "action idle", "Cancel activity and return the Hand to idle.", "§b");
                 helpLine(sender, label, "action transport ...", "Carry a grabbed player to a destination.", "§b");
             }
@@ -2085,24 +2029,12 @@ public final class GodHandCommand implements CommandExecutor, TabCompleter {
                 case "grab", "juggle", "wave", "thumbsup", "thumbsdown", "bird", "transport" -> playerNames(args[2], false);
                 case "pose" -> filter(args[2], List.of("open", "relaxed", "fist", "point", "bird", "thumbs_up", "thumbs_down", "claw"));
                 case "release" -> filter(args[2], List.of("0.25", "0.5", "1"));
-                case "throw" -> filter(args[2], List.of("1.0", "1.35", "1.75", "2.0"));
+                case "throw" -> filter(args[2], List.of("0.5", "1.0", "1.35", "2.0", "3.0", "5.0"));
                 default -> Collections.emptyList();
             };
         }
 
-        if (action.equals("pose")) {
-            if (args.length == 4) return filter(args[3], List.of("0.25", "0.5", "1", "2"));
-            if (args.length == 5) return filter(args[4], easingNames());
-        }
-        if (action.equals("throw")) {
-            if (args.length == 4) return filter(args[3], List.of("0.25", "0.45", "0.75", "1.0"));
-            if (args.length == 5) return filter(args[4], List.of("0.25", "0.4", "0.6", "1"));
-        }
-        if (action.equals("lookat")) {
-            if (args.length == 4 && isCoordinateToken(args[2])) return filter(args[3], worldCoordinates);
-            if (args.length == 5 && isCoordinateToken(args[2])) return filter(args[4], worldCoordinates);
-        }
-        if (action.equals("moveto")) {
+        if (action.equals("lookat") || action.equals("moveto")) {
             if (args.length == 4 && isCoordinateToken(args[2])) return filter(args[3], worldCoordinates);
             if (args.length == 5 && isCoordinateToken(args[2])) return filter(args[4], worldCoordinates);
         }

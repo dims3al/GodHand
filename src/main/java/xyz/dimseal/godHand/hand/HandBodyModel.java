@@ -18,10 +18,6 @@ public final class HandBodyModel {
         this.landmarkPoints = Collections.unmodifiableList(landmarkPoints);
     }
 
-    public static HandBodyModel create() {
-        return create(WristStyle.ANATOMICAL);
-    }
-
     public static HandBodyModel create(WristStyle wristStyle) {
         List<ModelPoint> body = new ArrayList<>(4200);
         List<ModelPoint> landmarks = new ArrayList<>();
@@ -47,20 +43,7 @@ public final class HandBodyModel {
             double y = lerp(-0.52, 0.64, t);
             double halfWidth = legacyPalmHalfWidth(t);
             double halfThickness = legacyPalmHalfThickness(t);
-            for (int xi = 0; xi <= faceXSamples; xi++) {
-                double x = lerp(-halfWidth, halfWidth, (double) xi / faceXSamples);
-                out.add(new ModelPoint(x, y, halfThickness));
-                out.add(new ModelPoint(x, y, -halfThickness));
-                if (((xi + yi) & 1) == 0) {
-                    out.add(new ModelPoint(x, y, halfThickness * 0.72));
-                    out.add(new ModelPoint(x, y, -halfThickness * 0.72));
-                }
-            }
-            for (int zi = 0; zi <= sideZSamples; zi++) {
-                double z = lerp(-halfThickness, halfThickness, (double) zi / sideZSamples);
-                out.add(new ModelPoint(-halfWidth, y, z));
-                out.add(new ModelPoint(halfWidth, y, z));
-            }
+            addLegacySlice(out, y, halfWidth, halfThickness, faceXSamples, sideZSamples, yi);
         }
         for (int yi = 0; yi <= 14; yi++) {
             double t = (double) yi / 14.0;
@@ -129,20 +112,27 @@ public final class HandBodyModel {
             double y = lerp(-1.02, -0.52, t);
             double halfWidth = lerp(0.27, 0.40, t);
             double halfThickness = lerp(0.085, 0.105, t);
-            for (int xi = 0; xi <= faceXSamples; xi++) {
-                double x = lerp(-halfWidth, halfWidth, (double) xi / faceXSamples);
-                out.add(new ModelPoint(x, y, halfThickness));
-                out.add(new ModelPoint(x, y, -halfThickness));
-                if (((xi + yi) & 1) == 0) {
-                    out.add(new ModelPoint(x, y, halfThickness * 0.72));
-                    out.add(new ModelPoint(x, y, -halfThickness * 0.72));
-                }
+            addLegacySlice(out, y, halfWidth, halfThickness, faceXSamples, sideZSamples, yi);
+        }
+    }
+
+    private static void addLegacySlice(
+            List<ModelPoint> out, double y, double halfWidth, double halfThickness,
+            int faceXSamples, int sideZSamples, int sliceIndex
+    ) {
+        for (int xi = 0; xi <= faceXSamples; xi++) {
+            double x = lerp(-halfWidth, halfWidth, (double) xi / faceXSamples);
+            out.add(new ModelPoint(x, y, halfThickness));
+            out.add(new ModelPoint(x, y, -halfThickness));
+            if (((xi + sliceIndex) & 1) == 0) {
+                out.add(new ModelPoint(x, y, halfThickness * 0.72));
+                out.add(new ModelPoint(x, y, -halfThickness * 0.72));
             }
-            for (int zi = 0; zi <= sideZSamples; zi++) {
-                double z = lerp(-halfThickness, halfThickness, (double) zi / sideZSamples);
-                out.add(new ModelPoint(-halfWidth, y, z));
-                out.add(new ModelPoint(halfWidth, y, z));
-            }
+        }
+        for (int zi = 0; zi <= sideZSamples; zi++) {
+            double z = lerp(-halfThickness, halfThickness, (double) zi / sideZSamples);
+            out.add(new ModelPoint(-halfWidth, y, z));
+            out.add(new ModelPoint(halfWidth, y, z));
         }
     }
 

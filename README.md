@@ -1,6 +1,6 @@
 <div align="center">
 
-# GodHand
+# ✋ GodHand ✋
 
 ### A giant animated hand for Minecraft servers.
 
@@ -14,7 +14,7 @@
 
 ---
 
-## What is GodHand?
+##  What is GodHand?
 
 **GodHand** is a Minecraft Paper plugin that gives server operators control over a giant animated hand.
 
@@ -24,8 +24,7 @@ The hand can grab players, throw them around, attack them, protect them, perform
 
 ---
 
-## Features
-
+##  Features
 - Fully animated giant hand
 - Custom attacks
 - Grab, carry, or transport players
@@ -42,36 +41,7 @@ The hand can grab players, throw them around, attack them, protect them, perform
 
 ---
 
-## 📦 Installation
-
-### Requirements
-
-![Paper](https://img.shields.io/badge/Paper-26.2-00aaee)
-![Purpur](https://img.shields.io/badge/Purpur-26.2-a855f7)
-![Java](https://img.shields.io/badge/Java-25.0.2-orange)
-
-GodHand currently supports:
-
-* ✅ Paper 26.2
-* ✅ Purpur 26.2
-* ❌ Spigot
-* ❌ CraftBukkit
-
-Install:
-
-1. Download the latest GodHand `.jar`.
-2. Place it inside your server's `plugins` folder.
-3. Restart the server.
-4. Make sure you are a server operator.
-5. Run:
-
-```text
-/gh help
-```
-
----
-
-## Some Actions
+##  Some Actions
 
 ### Attacks
 
@@ -91,16 +61,17 @@ Install:
 
 ```text
 /gh action grab <player>
-/gh action throw
+/gh action throw [strength]
 /gh action juggle <player>
 /gh action chase <player>
 /gh action stalk <player>
-/gh action wave 
+/gh action wave
 /gh action thumbsup
 /gh action thumbsdown
+/gh action pose <pose>
 ```
 
-### Friendly Actions
+### Friendly
 
 ```text
 /gh friendly bless <player>
@@ -116,30 +87,24 @@ For the full command list:
 
 ---
 
-## Customization
+## 📦 Installation
 
-GodHand includes several hand styles:
+### Requirements
 
-* ⚪ White
-* 👻 Spectral
-* 🔴 Crimson
-* 🟣 Violet
-* 🌑 Void
-* 🟡 Gold
-* 🟢 Emerald
-* 🔵 Cyan
-* 🟤 Sand
+![Paper](https://img.shields.io/badge/Paper-26.3-00aaee)
+![Purpur](https://img.shields.io/badge/Purpur-26.3-a855f7)
+![Java](https://img.shields.io/badge/Java-25.0.2-orange)
 
-Visual quality/performance can also be changed between these presets:
+### Install
 
-```text
-High
-Medium
-Low
-```
+1. Download the latest GodHand `.jar`.
+2. Place it inside your server's `plugins` folder.
+3. Restart the server.
+4. Make sure you are a server operator.
+5. Run:
 
 ```text
-/gh settings preset <profile>
+/gh help
 ```
 
 ---
@@ -156,20 +121,20 @@ For now, GodHand is simply a free open-source project made for fun and experimen
 
 ---
 
-## Built With
+##  Built With
 
 ![Java](https://img.shields.io/badge/Java-25.0.2-orange?style=flat-square)
 ![Paper API](https://img.shields.io/badge/API-Paper-00aaee?style=flat-square)
 ![Gradle](https://img.shields.io/badge/Build-Gradle-02303A?style=flat-square)
 
 * Java **25.0.2**
-* Minecraft **26.2**
+* Minecraft **26.3**
 * Paper API
 * Gradle
 
 ---
 
-## GNU License
+##  License
 
 GodHand is licensed under the **GNU General Public License v3.0**.
 
