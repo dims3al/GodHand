@@ -4,7 +4,7 @@
 
 ### A giant animated hand for Minecraft servers.
 
-![Minecraft](https://img.shields.io/badge/Minecraft-26.2-brightgreen?style=for-the-badge)
+![Minecraft](https://img.shields.io/badge/Minecraft-26.3-brightgreen?style=for-the-badge)
 ![Paper](https://img.shields.io/badge/Paper-Supported-00aaee?style=for-the-badge)
 ![Purpur](https://img.shields.io/badge/Purpur-Supported-a855f7?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-25.0.2-orange?style=for-the-badge)
@@ -128,7 +128,6 @@ For now, GodHand is simply a free open-source project made for fun and experimen
 ![Gradle](https://img.shields.io/badge/Build-Gradle-02303A?style=flat-square)
 
 * Java **25.0.2**
-* Minecraft **26.3**
 * Paper API
 * Gradle
 
